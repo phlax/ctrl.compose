@@ -31,6 +31,11 @@ class ComposeSubcommand(object):
     async def start_systemd(self):
         shell = component.getUtility(IShell)
         print(await shell.command('systemctl', 'daemon-reload'))
+        if self.config.get('controller', 'zmq-listen'):
+            await shell.command(
+                'systemctl',
+                'start',
+                'zmq-publish.service')
         for name in self.services:
             print('Starting socket for: %s' % name)
             print(
