@@ -36,6 +36,11 @@ class ComposeSubcommand(object):
                 'systemctl',
                 'start',
                 'zmq-publish.service')
+        if self.config.has_option('controller', 'zmq-listen'):
+            await shell.command(
+                'systemctl',
+                'start',
+                'zmq-rpc--proxy.socket')
         for name in self.services:
             print('Starting socket for: %s' % name)
             print(
