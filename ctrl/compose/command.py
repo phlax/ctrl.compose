@@ -1,9 +1,8 @@
 
 from zope import component, interface
 
-from ctrl.config.interfaces import ICtrlConfig
-from ctrl.command.interfaces import ISubcommand, IShell
-from ctrl.systemd.interfaces import ISystemctl
+from ctrl.core.interfaces import (
+    ICtrlConfig, IShell, ISubcommand, ISystemctl)
 
 
 @interface.implementer(ISubcommand)

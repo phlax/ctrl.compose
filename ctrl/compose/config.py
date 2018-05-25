@@ -6,8 +6,7 @@ from zope import component
 import yaml
 
 from ctrl.config.config import Config
-from ctrl.config.interfaces import ICtrlConfig
-from ctrl.command.interfaces import IShell
+from ctrl.core.interfaces import ICtrlConfig, IShell
 
 
 class ComposeConfig(Config):

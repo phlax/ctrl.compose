@@ -1,8 +1,8 @@
 
 from zope import component
 
-from ctrl.command.interfaces import ICommandRunner, ISubcommand
-from ctrl.config.interfaces import ICtrlConfig
+from ctrl.core.interfaces import (
+    ICommandRunner, ICtrlConfig, ISubcommand)
 
 from .config import ComposeConfig
 
