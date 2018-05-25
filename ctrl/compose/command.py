@@ -3,6 +3,7 @@ from zope import component, interface
 
 from ctrl.config.interfaces import ICtrlConfig
 from ctrl.command.interfaces import ISubcommand, IShell
+from ctrl.systemd.interfaces import ISystemctl
 
 
 @interface.implementer(ISubcommand)
@@ -29,8 +30,9 @@ class ComposeSubcommand(object):
             yield section[8:]
 
     async def start_systemd(self):
+        systemctl = component.getUtility(ISystemctl)
         shell = component.getUtility(IShell)
-        print(await shell.command('systemctl', 'daemon-reload'))
+        print(await systemctl.daemon_reload())
         if self.config.has_option('controller', 'zmq-publish'):
             await shell.command(
                 'systemctl',
