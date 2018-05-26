@@ -5,16 +5,15 @@ from zope import component
 
 import yaml
 
-from ctrl.config.config import Config
-from ctrl.core.interfaces import ICtrlConfig, IShell
+from ctrl.core.interfaces import ISettings, IShell
 
 
-class ComposeConfig(Config):
+class ComposeConfig(object):
 
     async def load(self):
-        ctrl_config = component.getUtility(ICtrlConfig)
+        ctrl_config = component.getUtility(ISettings)
         shell = component.getUtility(IShell)
-        context = ctrl_config.config.get('controller', 'context')
+        context = ctrl_config['controller']['context']
         os.environ['COMPOSE_CONTEXT'] = context
         self.config = yaml.load(
             await shell.command(

@@ -2,7 +2,7 @@
 from zope import component, interface
 
 from ctrl.core.interfaces import (
-    ICtrlConfig, IShell, ISubcommand, ISystemctl)
+    ISettings, IShell, ISubcommand, ISystemctl)
 
 
 @interface.implementer(ISubcommand)
@@ -17,13 +17,13 @@ class ComposeSubcommand(object):
 
     @property
     def config(self):
-        return component.getUtility(ICtrlConfig).config
+        return component.getUtility(ISettings)
 
     @property
     def services(self):
         sections = [
             s for s
-            in self.config.sections()
+            in self.config
             if s.startswith('service:')]
         for section in sections:
             yield section[8:]
@@ -32,12 +32,12 @@ class ComposeSubcommand(object):
         systemctl = component.getUtility(ISystemctl)
         shell = component.getUtility(IShell)
         print(await systemctl.daemon_reload())
-        if self.config.has_option('controller', 'zmq-publish'):
+        if 'zmq-publish' in self.config['controller']:
             await shell.command(
                 'systemctl',
                 'start',
                 'zmq-publish.service')
-        if self.config.has_option('controller', 'zmq-listen'):
+        if 'zmq-listen' in self.config['controller']:
             await shell.command(
                 'systemctl',
                 'start',
