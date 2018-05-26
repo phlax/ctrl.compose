@@ -2,7 +2,7 @@
 from zope import component, interface
 
 from ctrl.core.interfaces import (
-    ISettings, IShell, ISubcommand, ISystemctl)
+    ISettings, ISubcommand, ISystemctl)
 
 
 @interface.implementer(ISubcommand)
@@ -30,22 +30,13 @@ class ComposeSubcommand(object):
 
     async def start_systemd(self):
         systemctl = component.getUtility(ISystemctl)
-        shell = component.getUtility(IShell)
         print(await systemctl.daemon_reload())
         if 'zmq-publish' in self.config['controller']:
-            await shell.command(
-                'systemctl',
-                'start',
-                'zmq-publish.service')
+            await systemctl.start('zmq-publish.service')
         if 'zmq-listen' in self.config['controller']:
-            await shell.command(
-                'systemctl',
-                'start',
-                'zmq-rpc--proxy.socket')
+            await systemctl.start('zmq-rpc--proxy.socket')
         for name in self.services:
             print('Starting socket for: %s' % name)
-            print(
-                await shell.command(
-                    'systemctl',
-                    'start',
-                    'controller-%s--proxy.socket' % name))
+            print(await systemctl.start(
+                'controller-%s--proxy.socket'
+                % name))
