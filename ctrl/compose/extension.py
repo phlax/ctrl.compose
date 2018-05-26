@@ -1,21 +1,30 @@
 
 from zope import component
 
+from ctrl.core.extension import CtrlExtension
 from ctrl.core.interfaces import (
-    ICommandRunner, ICtrlConfig, ISubcommand)
+    ICommandRunner, ICtrlExtension,
+    ICtrlConfig, ISubcommand)
 
 from .config import ComposeConfig
 
 from .command import ComposeSubcommand
 
 
-class CtrlComposeExtension(object):
+class CtrlComposeExtension(CtrlExtension):
 
     @property
     def requires(self):
         return ['config', 'command']
 
-    async def register(self, app):
+    def register_adapters(self):
+        component.provideAdapter(
+            factory=ComposeSubcommand,
+            adapts=[ICommandRunner],
+            provides=ISubcommand,
+            name='compose')
+
+    async def register_utilities(self):
         config = ComposeConfig()
         await config.load()
         component.provideUtility(
@@ -23,8 +32,9 @@ class CtrlComposeExtension(object):
             provides=ICtrlConfig,
             name='compose')
 
-        component.provideAdapter(
-            factory=ComposeSubcommand,
-            adapts=[ICommandRunner],
-            provides=ISubcommand,
-            name='compose')
+
+# register the extension
+component.provideUtility(
+    CtrlComposeExtension(),
+    ICtrlExtension,
+    'compose')
