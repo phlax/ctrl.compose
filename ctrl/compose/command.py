@@ -31,6 +31,8 @@ class ComposeSubcommand(object):
     async def start_systemd(self):
         systemctl = component.getUtility(ISystemctl)
         print(await systemctl.daemon_reload())
+        if 'vpn-monitor' in self.config['controller']:
+            await systemctl.start('vpn-monitor.service')
         if 'zmq-publish' in self.config['controller']:
             await systemctl.start('zmq-publish.service')
         if 'zmq-listen' in self.config['controller']:
